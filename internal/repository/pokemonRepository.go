@@ -60,12 +60,11 @@ func (repo PokemonRepo) PokemonDelete(pokemonId int) error {
 	return nil
 }
 func (repo PokemonRepo) PokemonView() error {
-	if len(repo.Pokemon) == 0 {
-		return errors.New("POKEMON LIST IS EMPTY")
+	if len(repo.Pokemon) == 0 || repo.Pokemon == nil {
+		err := errors.New("POKEMON LIST IS EMPTY 🤬🤬🤬")
+		fmt.Println(err)
 	}
 	//print the pokemon list
-
-	// fmt.Println(repo.Pokemon)
 	for _, value := range repo.Pokemon {
 		fmt.Printf("%d %s %s %f %t ", value.ID, value.Name, value.Type, value.CatchRate, value.IsRare)
 		fmt.Println(value.RegisteredDate.Format("2006-01-02"))

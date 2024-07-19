@@ -1,8 +1,6 @@
 package usecase
 
 import (
-	"errors"
-
 	"main.go/internal/domain"
 	"main.go/internal/repository"
 )
@@ -39,21 +37,21 @@ func NewPokemonUsecase(pokemonRepo repository.PokemonRepoInterface) PokemonUseca
 func (uc PokemonUsecase) PokemonAdd(pokemon domain.Pokemon) error {
 	err := uc.PokemonRepo.PokemonAdd(&pokemon)
 	if err != nil {
-		return errors.New("KAYAKNYA ADA ERROR: " + err.Error())
+		return err
 	}
 	return nil
 }
 func (uc PokemonUsecase) PokemonDelete(pokemonId int) error {
 	err := uc.PokemonRepo.PokemonDelete(pokemonId)
 	if err != nil {
-		return errors.New("KAYAKNYA ADA ERROR: " + err.Error())
+		return err
 	}
 	return nil
 }
 func (uc PokemonUsecase) PokemonView() error {
 	err := uc.PokemonRepo.PokemonView()
 	if err != nil {
-		return errors.New("KAYAKNYA ADA ERROR: " + err.Error())
+		return err
 	}
 	return nil
 }

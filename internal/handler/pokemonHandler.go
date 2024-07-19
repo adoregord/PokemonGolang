@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"errors"
-
 	"main.go/internal/domain"
 	"main.go/internal/usecase"
 )
@@ -39,21 +37,21 @@ func NewPokemonHandler(pokemonUsecase usecase.PokemonUsecaseInterface) PokemonHa
 func (h PokemonHandler) PokemonAdd(pokemon domain.Pokemon) error {
 	err := h.PokemonUsecase.PokemonAdd(pokemon)
 	if err != nil {
-		return errors.New("KAYAKNYA ADA ERROR DEH: " + err.Error())
+		return err
 	}
 	return nil
 }
 func (h PokemonHandler) PokemonDelete(pokemonId int) error {
 	err := h.PokemonUsecase.PokemonDelete(pokemonId)
 	if err != nil {
-		return errors.New("KAYAKNYA ADA ERROR DEH: " + err.Error())
+		return err
 	}
 	return nil
 }
 func (h PokemonHandler) PokemonView() error {
 	err := h.PokemonUsecase.PokemonView()
 	if err != nil {
-		return errors.New("KAYAKNYA ADA ERROR DEH: " + err.Error())
+		return err
 	}
 	return nil
 }

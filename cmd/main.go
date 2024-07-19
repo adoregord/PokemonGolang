@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"main.go/internal/domain"
@@ -10,36 +11,55 @@ import (
 )
 
 func main() {
-	repo := repository.NewPokemonRepo()
-	uc := usecase.NewPokemonUsecase(repo)
-	h := handler.NewPokemonHandler(uc)
+	pokemonRepo := repository.NewPokemonRepo()
+	pokemonUc := usecase.NewPokemonUsecase(pokemonRepo)
+	pokemonH := handler.NewPokemonHandler(pokemonUc)
+
+	playerRepo := repository.NewPlayerRepo()
+	playerUc := usecase.NewPlayerUsecase(playerRepo)
+	playerH := handler.NewPlayerHandler(playerUc)
 
 	pokemon := []domain.Pokemon{
-		{Name: "Pikachu", Type: "Lightning", CatchRate: 70, IsRare: false, RegisteredDate: time.Now()},
-		{Name: "Bulbasaur", Type: "Plant", CatchRate: 50, IsRare: false, RegisteredDate: time.Now()},
-		{Name: "Charmander", Type: "Fire", CatchRate: 50, IsRare: false, RegisteredDate: time.Now()},
-		{Name: "Rattata", Type: "Normal", CatchRate: 80, IsRare: false, RegisteredDate: time.Now()},
-		{Name: "Ditto", Type: "Normal", CatchRate: 30, IsRare: true, RegisteredDate: time.Now()},
-		{Name: "Mew Two", Type: "Psychic", CatchRate: 0.001, IsRare: true, RegisteredDate: time.Now()},
-		{Name: "Dialga", Type: "Steel/Dragon", CatchRate: 0.001, IsRare: true, RegisteredDate: time.Now()},
-		{Name: "Arceus", Type: "Normal", CatchRate: 0.0000000000001, IsRare: true, RegisteredDate: time.Now()},
+		{Name: "Pikachu", Type: "Lightning", CatchRate: 70, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
+		{Name: "Bulbasaur", Type: "Plant", CatchRate: 50, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
+		{Name: "Charmander", Type: "Fire", CatchRate: 50, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
+		{Name: "Rattata", Type: "Normal", CatchRate: 80, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
+		{Name: "Ditto", Type: "Normal", CatchRate: 30, IsRare: true, RegisteredDate: time.Now().Format(time.RFC822)},
+		{Name: "Mew Two", Type: "Psychic", CatchRate: 0.001, IsRare: true, RegisteredDate: time.Now().Format(time.RFC822)},
+		{Name: "Dialga", Type: "Steel/Dragon", CatchRate: 0.001, IsRare: true, RegisteredDate: time.Now().Format(time.RFC822)},
+		{Name: "Arceus", Type: "Normal", CatchRate: 0.000001, IsRare: true, RegisteredDate: time.Now().Format(time.RFC822)},
 	}
 
 	pokemon2 := domain.Pokemon{
-		ID: 2, 
-		Name: "Arceussss", 
-		Type: "Normal", 
-		CatchRate: 100, 
-		IsRare: true, 
-		RegisteredDate: time.Now(),
+		ID:             2,
+		Name:           "Arceussss",
+		Type:           "Normal",
+		CatchRate:      100,
+		IsRare:         true,
+		RegisteredDate: time.Now().Format(time.RFC822),
+	}
+
+	player := domain.Player{
+		ID:       1,
+		UserName: "Didi",
+		ListPokemon: []domain.Pokemon{
+				pokemon[1],
+				pokemon[2],
+		},
 	}
 
 	for _, value := range pokemon {
-		h.PokemonAdd(value)
+		pokemonH.PokemonAdd(value)
 	}
-	h.PokemonView()
-	h.PokemonDelete(1)
-	h.PokemonUpdate(pokemon2)
-	h.PokemonView()
+	pokemonH.PokemonView()
+	pokemonH.PokemonDelete(1)
+	pokemonH.PokemonUpdate(pokemon2)
+	pokemonH.PokemonView()
 
+	playerH.PlayerAdd(player)
+	playerH.PlayerView()
+	playerH.PlayerAddPokemon(1, pokemon[7])
+	playerH.PlayerView()
+	playerH.PlayerDelete(1)
+	fmt.Print(playerH.PlayerView())
 }

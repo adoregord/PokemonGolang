@@ -79,9 +79,8 @@ func (repo PokemonRepo) PokemonView() error {
 	}
 	//print the pokemon list
 	for _, value := range repo.Pokemon {
-		fmt.Printf("%d %s %s %f %t ", value.ID, value.Name, value.Type, value.CatchRate, value.IsRare)
-		fmt.Println(value.RegisteredDate.Format("2006-01-02"))
+		fmt.Printf("%d %s %s %f %t %s\n", value.ID, value.Name, value.Type, value.CatchRate, value.IsRare, value.RegisteredDate)
 	}
-	fmt.Println()
+	fmt.Println()	
 	return nil
 }

@@ -10,11 +10,15 @@ import (
 // make an interface for pokemon repo
 type PokemonRepoInterface interface {
 	PokemonAdd
+	PokemonUpdate
 	PokemonDelete
 	PokemonView
 }
 type PokemonAdd interface {
 	PokemonAdd(pokemon *domain.Pokemon) error
+}
+type PokemonUpdate interface {
+	PokemonUpdate(pokemon *domain.Pokemon) error
 }
 type PokemonDelete interface {
 	PokemonDelete(pokemonId int) error
@@ -45,6 +49,15 @@ func (repo PokemonRepo) PokemonAdd(pokemon *domain.Pokemon) error {
 	_, exist := repo.Pokemon[pokemon.ID]
 	if exist {
 		return errors.New("POKEMON WITH SUCH ID IS ALREADY EXIST")
+	}
+	//add pokemon to the map
+	repo.Pokemon[pokemon.ID] = *pokemon
+	return nil
+}
+func (repo PokemonRepo) PokemonUpdate(pokemon *domain.Pokemon) error {
+	_, exist := repo.Pokemon[pokemon.ID]
+	if !exist {
+		return errors.New("POKEMON WITH SUCH ID IS NOT E")
 	}
 	//add pokemon to the map
 	repo.Pokemon[pokemon.ID] = *pokemon

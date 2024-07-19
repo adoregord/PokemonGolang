@@ -25,11 +25,21 @@ func main() {
 		{Name: "Arceus", Type: "Normal", CatchRate: 0.0000000000001, IsRare: true, RegisteredDate: time.Now()},
 	}
 
+	pokemon2 := domain.Pokemon{
+		ID: 2, 
+		Name: "Arceussss", 
+		Type: "Normal", 
+		CatchRate: 100, 
+		IsRare: true, 
+		RegisteredDate: time.Now(),
+	}
+
 	for _, value := range pokemon {
 		h.PokemonAdd(value)
 	}
 	h.PokemonView()
 	h.PokemonDelete(1)
+	h.PokemonUpdate(pokemon2)
 	h.PokemonView()
 
 }

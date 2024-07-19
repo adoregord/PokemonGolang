@@ -8,7 +8,7 @@ import (
 )
 
 // make an interface for pokemon repo
-type PokemonInterface interface {
+type PokemonRepoInterface interface {
 	PokemonAdd
 	PokemonDelete
 	PokemonView
@@ -29,7 +29,7 @@ type PokemonRepo struct {
 }
 
 // make a connection to the database
-func NewPokemon() PokemonInterface {
+func NewPokemonRepo() PokemonRepoInterface {
 	return PokemonRepo{
 		Pokemon: map[int]domain.Pokemon{},
 	}
@@ -37,6 +37,11 @@ func NewPokemon() PokemonInterface {
 
 // implement the required functions
 func (repo PokemonRepo) PokemonAdd(pokemon *domain.Pokemon) error {
+	if len(repo.Pokemon) == 0 {
+		pokemon.ID = 1
+	} else {
+		pokemon.ID = repo.Pokemon[len(repo.Pokemon)].ID + 1
+	}
 	_, exist := repo.Pokemon[pokemon.ID]
 	if exist {
 		return errors.New("POKEMON WITH SUCH ID IS ALREADY EXIST")
@@ -59,6 +64,12 @@ func (repo PokemonRepo) PokemonView() error {
 		return errors.New("POKEMON LIST IS EMPTY")
 	}
 	//print the pokemon list
-	fmt.Println(repo.Pokemon)
+
+	// fmt.Println(repo.Pokemon)
+	for _, value := range repo.Pokemon {
+		fmt.Printf("%d %s %s %f %t ", value.ID, value.Name, value.Type, value.CatchRate, value.IsRare)
+		fmt.Println(value.RegisteredDate.Format("2006-01-02"))
+	}
+	fmt.Println()
 	return nil
 }

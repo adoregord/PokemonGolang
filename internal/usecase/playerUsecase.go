@@ -16,7 +16,7 @@ type PlayerUsecaseInterface interface {
 	PlayerViewTheirPokemon
 }
 type PlayerAdd interface {
-	PlayerAdd(player domain.Player) error
+	PlayerAdd(player domain.Player) (*domain.Player, error)
 }
 type PlayerUpdate interface {
 	PlayerUpdate(player domain.Player) error
@@ -50,12 +50,12 @@ func NewPlayerUsecase(playerRepo repository.PlayerRepoInterface) PlayerUsecaseIn
 }
 
 // make an implementation for player usecase
-func (uc PlayerUsecase) PlayerAdd(player domain.Player) error {
-	err := uc.PlayerRepo.PlayerAdd(&player)
+func (uc PlayerUsecase) PlayerAdd(player domain.Player) (*domain.Player, error) {
+	value ,err := uc.PlayerRepo.PlayerAdd(&player)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return value, nil
 }
 func (uc PlayerUsecase) PlayerUpdate(player domain.Player) error {
 	err := uc.PlayerRepo.PlayerUpdate(&player)

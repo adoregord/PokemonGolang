@@ -6,6 +6,7 @@ import (
 	"math/rand/v2"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"main.go/internal/domain"
@@ -41,7 +42,8 @@ func main() {
 	Scanner := bufio.NewScanner(os.Stdin)
 
 	var player2 domain.Player
-	loggedIn := false
+	var loggedIn bool
+	var isAdmin bool
 
 	// make pokemon list
 	pokemons := []domain.Pokemon{
@@ -56,7 +58,7 @@ func main() {
 	}
 	// add to the databse through handler
 	for _, value := range pokemons {
-		if err := pokemonH.PokemonAdd(value); err != nil{
+		if err := pokemonH.PokemonAdd(value); err != nil {
 			fmt.Println(err)
 			return
 		}
@@ -71,25 +73,30 @@ func main() {
 				fmt.Print("Username: ")
 				Scanner.Scan()
 				usernameStr := Scanner.Text()
-				player2.UserName = usernameStr
-				_, err := playerH.PlayerLogin(usernameStr)
+				lowerUsername := strings.ToLower(usernameStr)
+				player2, err := playerH.PlayerLogin(lowerUsername)
 				if err != nil {
 					fmt.Println(err)
 					time.Sleep(2 * time.Second)
+					fmt.Println()
 					continue
 				}
+				isAdmin = player2.IsAdmin
 				loggedIn = true
 			case "R", "r", "register", "Register", "REGISTER":
 				fmt.Print("Username: ")
 				Scanner.Scan()
 				usernameStr := Scanner.Text()
-				player2.UserName = usernameStr
-				err := playerH.PlayerAdd(player2)
+				lowerUsername := strings.ToLower(usernameStr)
+				player2.UserName = lowerUsername
+				player2, err := playerH.PlayerAdd(player2)
 				if err != nil {
 					fmt.Println(err)
 					time.Sleep(2 * time.Second)
+					fmt.Println()
 					continue
 				}
+				isAdmin = player2.IsAdmin
 				loggedIn = true
 			case "e", "E", "exit", "Exit", "EXIT":
 				return
@@ -99,7 +106,7 @@ func main() {
 				fmt.Println()
 			}
 		}
-		fmt.Printf("\nHi %s What do you wanna do?\n1. Catch pokemon!\n2. View Your Pokemons!\n3. Log out\nSelect: ", player2.UserName)
+		fmt.Printf("\nHi %s What do you wanna do?\n1. Catch pokemon!\n2. View Your Pokemons!\n3. View All players(ADMIN ONLY)\n4. Log out\nSelect: ", player2.UserName)
 		Scanner.Scan()
 		todoStr := Scanner.Text()
 		todo, err := strconv.Atoi(todoStr)
@@ -126,11 +133,11 @@ func main() {
 					continue
 				}
 				catch := catchProbability(pokemons[pokemon-1].CatchRate)
-				for i:=0; i<3; i++{
+				for i := 0; i < 3; i++ {
 					fmt.Print("• ")
-					time.Sleep(1500 * time.Millisecond)
+					time.Sleep(1300 * time.Millisecond)
 				}
-				if catch == "SUCCESS"{
+				if catch == "SUCCESS" {
 					fmt.Printf("You've CAUGHT %s!!\n", pokemons[pokemon-1].Name)
 					playerH.PlayerAddPokemon(player2.UserName, pokemons[pokemon-1])
 					playerH.PlayerViewTheirPokemon(player2.UserName)
@@ -142,9 +149,22 @@ func main() {
 				break
 			}
 		case 2:
-			fmt.Print(playerH.PlayerViewTheirPokemon(player2.UserName))
+			err := playerH.PlayerViewTheirPokemon(player2.UserName)
+			if err != nil {
+				fmt.Println(err)
+				time.Sleep(2 * time.Second)
+				continue
+			}
 			time.Sleep(2 * time.Second)
 		case 3:
+			if !isAdmin {
+				fmt.Printf("Only Admins can access this feature!\n\n")
+				time.Sleep(2 * time.Second)
+				continue
+			}
+			playerH.PlayerView()
+			time.Sleep(2 * time.Second)
+		case 4:
 			loggedIn = false
 		default:
 			err := fmt.Errorf("you have to input number from 1 to 3")

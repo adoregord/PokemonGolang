@@ -3,7 +3,6 @@ package repository
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"main.go/internal/domain"
 )
@@ -19,7 +18,7 @@ type PlayerRepoInterface interface {
 	PlayerViewTheirPokemon
 }
 type PlayerAdd interface {
-	PlayerAdd(player *domain.Player) error
+	PlayerAdd(player *domain.Player) (*domain.Player, error)
 }
 type PlayerUpdate interface {
 	PlayerUpdate(player *domain.Player) error
@@ -36,7 +35,7 @@ type PlayerAddPokemon interface {
 type PlayerLogin interface {
 	PlayerLogin(playerUsn string) (*domain.Player, error)
 }
-type PlayerViewTheirPokemon interface{
+type PlayerViewTheirPokemon interface {
 	PlayerViewTheirPokemon(playerUsn string) error
 }
 
@@ -53,23 +52,23 @@ func NewPlayerRepo() PlayerRepoInterface {
 }
 
 // make an implementation for player repo
-func (repo PlayerRepo) PlayerAdd(player *domain.Player) error {
+func (repo PlayerRepo) PlayerAdd(player *domain.Player) (*domain.Player, error) {
 	// check if the username is already exist or not
 	for _, value := range repo.Player {
-		if value.UserName == strings.ToLower(player.UserName) {
-			err := errors.New("PLAYER WITH SUCH USERNAME IS ALREADY EXIST")
-			fmt.Println(err)
+		if value.UserName == player.UserName {
+			return nil, errors.New("PLAYER WITH SUCH USERNAME IS ALREADY EXIST")
 		}
 	}
 	// make auto increment for each players
 	if len(repo.Player) == 0 {
 		player.ID = 1
+		player.IsAdmin = true // set the first user as admin
 	} else {
 		player.ID = repo.Player[len(repo.Player)].ID + 1
 	}
 	//add player to the map (database)
 	repo.Player[player.ID] = *player
-	return nil
+	return player, nil
 }
 
 // player update for updating the player
@@ -85,7 +84,7 @@ func (repo PlayerRepo) PlayerUpdate(player *domain.Player) error {
 // PlayerAddPokemon implements PlayerRepoInterface for updating the player's pokemon list
 func (repo PlayerRepo) PlayerAddPokemon(playerUsn string, pokemon *domain.Pokemon) error {
 	for index, value := range repo.Player {
-		if value.UserName == strings.ToLower(playerUsn) {
+		if value.UserName == (playerUsn) {
 			value.ListPokemon = append(value.ListPokemon, *pokemon)
 			repo.Player[index] = value
 			return nil
@@ -105,15 +104,15 @@ func (repo PlayerRepo) PlayerDelete(playerId int) error {
 }
 
 func (repo PlayerRepo) PlayerView() error {
-	if len(repo.Player) == 0 || repo.Player == nil {
-		return errors.New("POKEMON LIST IS EMPTY 🤬🤬🤬")
-	}
-
 	for _, value := range repo.Player {
-		fmt.Printf("Player %s (%d): \nPokemons: \n", value.UserName, value.ID)
-		for index, value := range value.ListPokemon {
-			fmt.Printf("%d %s - %s - %f\n", index+1, value.Name, value.Type, value.CatchRate)
+		fmt.Printf("Player %s ID(%d): \nPokemons: \n", value.UserName, value.ID)
+		if len(value.ListPokemon) == 0 || value.ListPokemon == nil {
+			fmt.Println("THIS PLAYER HAVEN'T CAUGHT ANY POKEMON😔😔😔")
 		}
+		for index, value := range value.ListPokemon {
+			fmt.Printf("%d %s - %s\n", index+1, value.Name, value.Type)
+		}
+
 	}
 	fmt.Println()
 	return nil
@@ -136,8 +135,9 @@ func (repo PlayerRepo) PlayerViewTheirPokemon(playerUsn string) error {
 			}
 			fmt.Printf("Player %s with ID %d has:\n", value.UserName, value.ID)
 			for index, value := range value.ListPokemon {
-				fmt.Printf("%d %s - %s - %f\n", index+1, value.Name, value.Type, value.CatchRate)
+				fmt.Printf("%d %s - %s\n", index+1, value.Name, value.Type)
 			}
+			return nil
 		}
 	}
 	return errors.New("PLAYER WITH SUCH USERNAME IS NOT EXIST🤬🤬🤬")

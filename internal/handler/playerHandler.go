@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"errors"
+	"strings"
+
 	"main.go/internal/domain"
 	"main.go/internal/usecase"
 )
@@ -16,7 +19,7 @@ type PlayerHandlerInterface interface {
 	PlayerViewTheirPokemon
 }
 type PlayerAdd interface {
-	PlayerAdd(player domain.Player) error
+	PlayerAdd(player domain.Player) (*domain.Player, error)
 }
 type PlayerUpdate interface {
 	PlayerUpdate(player domain.Player) error
@@ -50,10 +53,10 @@ func NewPlayerHandler(playerUsecase usecase.PlayerUsecaseInterface) PlayerHandle
 }
 
 // implement the interface for player handler
-func (h PlayerHandler) PlayerAdd(player domain.Player) error {
+func (h PlayerHandler) PlayerAdd(player domain.Player) (*domain.Player, error) {
 	// validate the input first
 	if err := validate.Struct(player); err != nil {
-		return err
+		return nil, err
 	}
 	return h.PlayerUsecase.PlayerAdd(player)
 	// err := h.PlayerUsecase.PlayerAdd(player)
@@ -88,6 +91,9 @@ func (h PlayerHandler) PlayerView() error {
 	return nil
 }
 func (h PlayerHandler) PlayerAddPokemon(playerUsn string, pokemon domain.Pokemon) error {
+	if err := validate.Struct(pokemon); err != nil {
+		return err
+	}
 	err := h.PlayerUsecase.PlayerAddPokemon(playerUsn, pokemon)
 	if err != nil {
 		return err
@@ -95,6 +101,9 @@ func (h PlayerHandler) PlayerAddPokemon(playerUsn string, pokemon domain.Pokemon
 	return nil
 }
 func (h PlayerHandler) PlayerLogin(playerUsn string) (*domain.Player, error) {
+	if len(strings.TrimSpace(playerUsn)) == 0{
+		return nil, errors.New("player username cannot be blank or empty")
+	}
 	player, err := h.PlayerUsecase.PlayerLogin(playerUsn)
 	if err != nil {
 		return nil, err

@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"main.go/internal/domain"
 )
@@ -55,7 +56,7 @@ func NewPlayerRepo() PlayerRepoInterface {
 func (repo PlayerRepo) PlayerAdd(player *domain.Player) error {
 	// check if the username is already exist or not
 	for _, value := range repo.Player {
-		if value.UserName == player.UserName {
+		if value.UserName == strings.ToLower(player.UserName) {
 			err := errors.New("PLAYER WITH SUCH USERNAME IS ALREADY EXIST")
 			fmt.Println(err)
 		}
@@ -84,7 +85,7 @@ func (repo PlayerRepo) PlayerUpdate(player *domain.Player) error {
 // PlayerAddPokemon implements PlayerRepoInterface for updating the player's pokemon list
 func (repo PlayerRepo) PlayerAddPokemon(playerUsn string, pokemon *domain.Pokemon) error {
 	for index, value := range repo.Player {
-		if value.UserName == playerUsn {
+		if value.UserName == strings.ToLower(playerUsn) {
 			value.ListPokemon = append(value.ListPokemon, *pokemon)
 			repo.Player[index] = value
 			return nil
@@ -130,6 +131,9 @@ func (repo PlayerRepo) PlayerLogin(playerUsn string) (*domain.Player, error) {
 func (repo PlayerRepo) PlayerViewTheirPokemon(playerUsn string) error {
 	for _, value := range repo.Player {
 		if value.UserName == playerUsn {
+			if value.ListPokemon == nil {
+				return errors.New("YOU HAVENT CAUGHT ANY POKEMON")
+			}
 			fmt.Printf("Player %s with ID %d has:\n", value.UserName, value.ID)
 			for index, value := range value.ListPokemon {
 				fmt.Printf("%d %s - %s - %f\n", index+1, value.Name, value.Type, value.CatchRate)

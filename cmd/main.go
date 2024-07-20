@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math/rand/v2"
 	"os"
 	"strconv"
 	"time"
@@ -12,6 +13,21 @@ import (
 	"main.go/internal/repository"
 	"main.go/internal/usecase"
 )
+
+func catchProbability(rate float32) string {
+	if rate < 0 || rate > 100 {
+		return "Invalid rate. Please provide a rate between 0 and 100."
+	}
+
+	// rand.Seed(time.Now().UnixNano()) // Seed the random number generator
+	// chance := rand.Intn(100) + 1     // Generate a random number between 1 and 100
+	chance := rand.Float32() * (100 - 0) // Generate a random number between 1 and 100
+
+	if chance <= rate {
+		return "SUCCESS"
+	}
+	return "FAIL"
+}
 
 func main() {
 	pokemonRepo := repository.NewPokemonRepo()
@@ -29,7 +45,7 @@ func main() {
 
 	// make pokemon list
 	pokemons := []domain.Pokemon{
-		{Name: "Pikachu", Type: "Lightning", CatchRate: 70, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
+		{Name: "Pikachu", Type: "Lightning", CatchRate: 100, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
 		{Name: "Bulbasaur", Type: "Plant", CatchRate: 50, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
 		{Name: "Charmander", Type: "Fire", CatchRate: 50, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
 		{Name: "Rattata", Type: "Normal", CatchRate: 80, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
@@ -40,7 +56,10 @@ func main() {
 	}
 	// add to the databse through handler
 	for _, value := range pokemons {
-		pokemonH.PokemonAdd(value)
+		if err := pokemonH.PokemonAdd(value); err != nil{
+			fmt.Println(err)
+			return
+		}
 	}
 	for {
 		for !loggedIn {
@@ -93,8 +112,7 @@ func main() {
 			fmt.Printf("\nWhich Pokemon you wanna catch %s?\n", player2.UserName)
 			pokemonH.PokemonView()
 			for {
-				fmt.Print("Pokemon ID you wanna catch:")
-
+				fmt.Print("Pokemon ID you wanna catch: ")
 				Scanner.Scan()
 				pokemonStr := Scanner.Text()
 				pokemon, err := strconv.Atoi(pokemonStr)
@@ -107,13 +125,24 @@ func main() {
 					time.Sleep(3 * time.Second)
 					continue
 				}
-				playerH.PlayerAddPokemon(player2.UserName, pokemons[pokemon-1])
-				playerH.PlayerViewTheirPokemon(player2.UserName)
+				catch := catchProbability(pokemons[pokemon-1].CatchRate)
+				for i:=0; i<3; i++{
+					fmt.Print("• ")
+					time.Sleep(1500 * time.Millisecond)
+				}
+				if catch == "SUCCESS"{
+					fmt.Printf("You've CAUGHT %s!!\n", pokemons[pokemon-1].Name)
+					playerH.PlayerAddPokemon(player2.UserName, pokemons[pokemon-1])
+					playerH.PlayerViewTheirPokemon(player2.UserName)
+					time.Sleep(2 * time.Second)
+					break
+				}
+				fmt.Printf("Wild pokemon %s ran away!", pokemons[pokemon-1].Name)
 				time.Sleep(2 * time.Second)
 				break
 			}
 		case 2:
-			playerH.PlayerViewTheirPokemon(player2.UserName)
+			fmt.Print(playerH.PlayerViewTheirPokemon(player2.UserName))
 			time.Sleep(2 * time.Second)
 		case 3:
 			loggedIn = false

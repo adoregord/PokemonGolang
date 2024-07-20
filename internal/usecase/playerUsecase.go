@@ -12,6 +12,8 @@ type PlayerUsecaseInterface interface {
 	PlayerDelete
 	PlayerView
 	PlayerAddPokemon
+	PlayerLogin
+	PlayerViewTheirPokemon
 }
 type PlayerAdd interface {
 	PlayerAdd(player domain.Player) error
@@ -26,7 +28,13 @@ type PlayerView interface {
 	PlayerView() error
 }
 type PlayerAddPokemon interface {
-	PlayerAddPokemon(playerId int, pokemon domain.Pokemon) error
+	PlayerAddPokemon(playerUsn string, pokemon domain.Pokemon) error
+}
+type PlayerLogin interface {
+	PlayerLogin(playerUsn string) (*domain.Player, error)
+}
+type PlayerViewTheirPokemon interface {
+	PlayerViewTheirPokemon(playerUsn string) error
 }
 
 // make a struct
@@ -44,7 +52,7 @@ func NewPlayerUsecase(playerRepo repository.PlayerRepoInterface) PlayerUsecaseIn
 // make an implementation for player usecase
 func (uc PlayerUsecase) PlayerAdd(player domain.Player) error {
 	err := uc.PlayerRepo.PlayerAdd(&player)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	return nil
@@ -70,8 +78,23 @@ func (uc PlayerUsecase) PlayerView() error {
 	}
 	return nil
 }
-func (uc PlayerUsecase) PlayerAddPokemon(playerId int, pokemon domain.Pokemon) error {
-	err := uc.PlayerRepo.PlayerAddPokemon(playerId, &pokemon)
+func (uc PlayerUsecase) PlayerAddPokemon(playerUsn string, pokemon domain.Pokemon) error {
+	err := uc.PlayerRepo.PlayerAddPokemon(playerUsn, &pokemon)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (uc PlayerUsecase) PlayerLogin(playerUsn string) (*domain.Player, error) {
+	player, err := uc.PlayerRepo.PlayerLogin(playerUsn)
+	if err != nil {
+		return nil, err
+	}
+	return player, nil
+}
+
+func (uc PlayerUsecase) PlayerViewTheirPokemon(playerUsn string) error {
+	err := uc.PlayerRepo.PlayerViewTheirPokemon(playerUsn)
 	if err != nil {
 		return err
 	}

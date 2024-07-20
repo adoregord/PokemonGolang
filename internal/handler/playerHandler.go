@@ -12,6 +12,8 @@ type PlayerHandlerInterface interface {
 	PlayerDelete
 	PlayerView
 	PlayerAddPokemon
+	PlayerLogin
+	PlayerViewTheirPokemon
 }
 type PlayerAdd interface {
 	PlayerAdd(player domain.Player) error
@@ -26,7 +28,13 @@ type PlayerView interface {
 	PlayerView() error
 }
 type PlayerAddPokemon interface {
-	PlayerAddPokemon(playerId int, pokemon domain.Pokemon) error
+	PlayerAddPokemon(playerUsn string, pokemon domain.Pokemon) error
+}
+type PlayerLogin interface{
+	PlayerLogin(playerUsn string) (*domain.Player, error)
+}
+type PlayerViewTheirPokemon interface{
+	PlayerViewTheirPokemon(playerUsn string) error
 }
 
 // make a struct
@@ -58,21 +66,36 @@ func (h PlayerHandler) PlayerUpdate(player domain.Player) error {
 }
 func (h PlayerHandler) PlayerDelete(playerId int) error {
 	err := h.PlayerUsecase.PlayerDelete(playerId)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	return nil
 }
 func (h PlayerHandler) PlayerView() error {
 	err := h.PlayerUsecase.PlayerView()
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	return nil
 }
-func (h PlayerHandler) PlayerAddPokemon(playerId int, pokemon domain.Pokemon) error {
-	err := h.PlayerUsecase.PlayerAddPokemon(playerId, pokemon)
-	if err != nil{
+func (h PlayerHandler) PlayerAddPokemon(playerUsn string, pokemon domain.Pokemon) error {
+	err := h.PlayerUsecase.PlayerAddPokemon(playerUsn, pokemon)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (h PlayerHandler) PlayerLogin(playerUsn string) (*domain.Player, error) {
+	player, err := h.PlayerUsecase.PlayerLogin(playerUsn)
+	if err != nil {
+		return nil, err
+	}
+	return player, nil
+}
+
+func (h PlayerHandler) PlayerViewTheirPokemon(playerUsn string) error {
+	err := h.PlayerUsecase.PlayerViewTheirPokemon(playerUsn)
+	if err != nil {
 		return err
 	}
 	return nil

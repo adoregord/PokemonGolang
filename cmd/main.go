@@ -26,7 +26,6 @@ func main() {
 
 	var player2 domain.Player
 	loggedIn := false
-	flag := true
 
 	// make pokemon list
 	pokemons := []domain.Pokemon{
@@ -43,7 +42,7 @@ func main() {
 	for _, value := range pokemons {
 		pokemonH.PokemonAdd(value)
 	}
-	for flag {
+	for {
 		for !loggedIn {
 			fmt.Printf("Please login/register first\nPress E for exit\nLogin/Register [L/R]: ")
 			Scanner.Scan()
@@ -74,7 +73,7 @@ func main() {
 				}
 				loggedIn = true
 			case "e", "E", "exit", "Exit", "EXIT":
-				flag = false
+				return
 			default:
 				fmt.Println(fmt.Errorf("please input L/R only"))
 				time.Sleep(2 * time.Second)

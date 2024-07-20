@@ -39,18 +39,26 @@ func NewPokemonHandler(pokemonUsecase usecase.PokemonUsecaseInterface) PokemonHa
 
 // implement the interface
 func (h PokemonHandler) PokemonAdd(pokemon domain.Pokemon) error {
-	err := h.PokemonUsecase.PokemonAdd(pokemon)
-	if err != nil {
+	//validate the input first
+	if err := validate.Struct(pokemon); err!= nil{
 		return err
 	}
-	return nil
+	return h.PokemonUsecase.PokemonAdd(pokemon)
+	// if err != nil {
+	// 	return err
+	// }
+	// return nil
 }
 func (h PokemonHandler) PokemonUpdate(pokemon domain.Pokemon) error {
-	err := h.PokemonUsecase.PokemonUpdate(pokemon)
-	if err != nil {
+	//validate the input first
+	if err := validate.Struct(pokemon); err!= nil{
 		return err
 	}
-	return nil
+	return  h.PokemonUsecase.PokemonUpdate(pokemon)
+	// if err != nil {
+	// 	return err
+	// }
+	// return nil
 }
 func (h PokemonHandler) PokemonDelete(pokemonId int) error {
 	err := h.PokemonUsecase.PokemonDelete(pokemonId)

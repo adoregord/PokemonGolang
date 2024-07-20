@@ -30,10 +30,10 @@ type PlayerView interface {
 type PlayerAddPokemon interface {
 	PlayerAddPokemon(playerUsn string, pokemon domain.Pokemon) error
 }
-type PlayerLogin interface{
+type PlayerLogin interface {
 	PlayerLogin(playerUsn string) (*domain.Player, error)
 }
-type PlayerViewTheirPokemon interface{
+type PlayerViewTheirPokemon interface {
 	PlayerViewTheirPokemon(playerUsn string) error
 }
 
@@ -51,13 +51,22 @@ func NewPlayerHandler(playerUsecase usecase.PlayerUsecaseInterface) PlayerHandle
 
 // implement the interface for player handler
 func (h PlayerHandler) PlayerAdd(player domain.Player) error {
-	err := h.PlayerUsecase.PlayerAdd(player)
-	if err != nil {
+	// validate the input first
+	if err := validate.Struct(player); err != nil {
 		return err
 	}
-	return nil
+	return h.PlayerUsecase.PlayerAdd(player)
+	// err := h.PlayerUsecase.PlayerAdd(player)
+	// if err != nil {
+	// 	return err
+	// }
+	// return nil
 }
 func (h PlayerHandler) PlayerUpdate(player domain.Player) error {
+	//validate first
+	if err := validate.Struct(player); err != nil {
+		return err
+	}
 	err := h.PlayerUsecase.PlayerUpdate(player)
 	if err != nil {
 		return err

@@ -59,11 +59,6 @@ func (h PlayerHandler) PlayerAdd(player domain.Player) (*domain.Player, error) {
 		return nil, err
 	}
 	return h.PlayerUsecase.PlayerAdd(player)
-	// err := h.PlayerUsecase.PlayerAdd(player)
-	// if err != nil {
-	// 	return err
-	// }
-	// return nil
 }
 func (h PlayerHandler) PlayerUpdate(player domain.Player) error {
 	//validate first
@@ -91,7 +86,7 @@ func (h PlayerHandler) PlayerView() error {
 	return nil
 }
 func (h PlayerHandler) PlayerAddPokemon(playerUsn string, pokemon domain.Pokemon) error {
-	if err := validate.Struct(pokemon); err != nil {
+	if err := validate.Struct(pokemon); err != nil || len(strings.TrimSpace(playerUsn)) == 0 {
 		return err
 	}
 	err := h.PlayerUsecase.PlayerAddPokemon(playerUsn, pokemon)
@@ -112,6 +107,9 @@ func (h PlayerHandler) PlayerLogin(playerUsn string) (*domain.Player, error) {
 }
 
 func (h PlayerHandler) PlayerViewTheirPokemon(playerUsn string) error {
+	if len(strings.TrimSpace(playerUsn)) == 0{
+		return errors.New("player username cannot be blank or empty")
+	}
 	err := h.PlayerUsecase.PlayerViewTheirPokemon(playerUsn)
 	if err != nil {
 		return err

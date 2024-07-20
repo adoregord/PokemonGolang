@@ -44,10 +44,6 @@ func (h PokemonHandler) PokemonAdd(pokemon domain.Pokemon) error {
 		return err
 	}
 	return h.PokemonUsecase.PokemonAdd(pokemon)
-	// if err != nil {
-	// 	return err
-	// }
-	// return nil
 }
 func (h PokemonHandler) PokemonUpdate(pokemon domain.Pokemon) error {
 	//validate the input first
@@ -55,10 +51,6 @@ func (h PokemonHandler) PokemonUpdate(pokemon domain.Pokemon) error {
 		return err
 	}
 	return  h.PokemonUsecase.PokemonUpdate(pokemon)
-	// if err != nil {
-	// 	return err
-	// }
-	// return nil
 }
 func (h PokemonHandler) PokemonDelete(pokemonId int) error {
 	err := h.PokemonUsecase.PokemonDelete(pokemonId)

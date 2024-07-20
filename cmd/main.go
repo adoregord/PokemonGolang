@@ -47,14 +47,14 @@ func main() {
 
 	// make pokemon list
 	pokemons := []domain.Pokemon{
-		{Name: "Pikachu", Type: "Lightning", CatchRate: 100, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
-		{Name: "Bulbasaur", Type: "Plant", CatchRate: 50, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
-		{Name: "Charmander", Type: "Fire", CatchRate: 50, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
-		{Name: "Rattata", Type: "Normal", CatchRate: 80, IsRare: false, RegisteredDate: time.Now().Format(time.RFC822)},
-		{Name: "Ditto", Type: "Normal", CatchRate: 30, IsRare: true, RegisteredDate: time.Now().Format(time.RFC822)},
-		{Name: "Mew Two", Type: "Psychic", CatchRate: 0.001, IsRare: true, RegisteredDate: time.Now().Format(time.RFC822)},
-		{Name: "Dialga", Type: "Steel/Dragon", CatchRate: 0.001, IsRare: true, RegisteredDate: time.Now().Format(time.RFC822)},
-		{Name: "Arceus", Type: "Normal", CatchRate: 0.000001, IsRare: true, RegisteredDate: time.Now().Format(time.RFC822)},
+		{Name: "Pikachu", Type: "Lightning", CatchRate: 100, IsRare: false, RegisteredDate: time.Now().Format("02-Jan-2006 15:04:05")},
+		{Name: "Bulbasaur", Type: "Plant", CatchRate: 50, IsRare: false, RegisteredDate: time.Now().Format("02-Jan-2006 15:04:05")},
+		{Name: "Charmander", Type: "Fire", CatchRate: 50, IsRare: false, RegisteredDate: time.Now().Format("02-Jan-2006 15:04:05")},
+		{Name: "Rattata", Type: "Normal", CatchRate: 80, IsRare: false, RegisteredDate: time.Now().Format("02-Jan-2006 15:04:05")},
+		{Name: "Ditto", Type: "Normal", CatchRate: 30, IsRare: true, RegisteredDate: time.Now().Format("02-Jan-2006 15:04:05")},
+		{Name: "Mew Two", Type: "Psychic", CatchRate: 0.001, IsRare: true, RegisteredDate: time.Now().Format("02-Jan-2006 15:04:05")},
+		{Name: "Dialga", Type: "Steel/Dragon", CatchRate: 0.001, IsRare: true, RegisteredDate: time.Now().Format("02-Jan-2006 15:04:05")},
+		{Name: "Arceus", Type: "Normal", CatchRate: 0.000001, IsRare: true, RegisteredDate: time.Now().Format("02-Jan-2006 15:04:05")},
 	}
 	// add to the databse through handler
 	for _, value := range pokemons {

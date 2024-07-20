@@ -2,6 +2,7 @@ package handler
 
 import (
 	"strings"
+	"time"
 
 	"github.com/go-playground/validator"
 )
@@ -15,9 +16,9 @@ func init() {
 	validate.RegisterValidation("noblank", func(fl validator.FieldLevel) bool {
 		return strings.TrimSpace(fl.Field().String()) != ""
 	})
-	// validate.RegisterValidation("datetime", func(fl validator.FieldLevel) bool {
-	// 	dateStr := fl.Field().String()
-	// 	_, err := time.Parse("2006-01-02", dateStr)
-	// 	return err == nil
-	// })
+	validate.RegisterValidation("datetime", func(fl validator.FieldLevel) bool {
+		dateStr := fl.Field().String()
+		_, err := time.Parse("02-Jan-2006 15:04:05", dateStr)
+		return err == nil
+	})
 }

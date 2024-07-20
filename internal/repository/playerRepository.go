@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"main.go/internal/domain"
 )
@@ -86,6 +87,7 @@ func (repo PlayerRepo) PlayerAddPokemon(playerUsn string, pokemon *domain.Pokemo
 	for index, value := range repo.Player {
 		if value.UserName == (playerUsn) {
 			value.ListPokemon = append(value.ListPokemon, *pokemon)
+			value.ListPokemon[len(value.ListPokemon)-1].RegisteredDate = time.Now().Format("02-Jan-2006 15:04:05")
 			repo.Player[index] = value
 			return nil
 		}
@@ -110,9 +112,9 @@ func (repo PlayerRepo) PlayerView() error {
 			fmt.Println("THIS PLAYER HAVEN'T CAUGHT ANY POKEMON😔😔😔")
 		}
 		for index, value := range value.ListPokemon {
-			fmt.Printf("%d %s - %s\n", index+1, value.Name, value.Type)
+			fmt.Printf("%d %s - %s - %s\n", index+1, value.Name, value.Type, value.RegisteredDate)
 		}
-
+		fmt.Println()
 	}
 	fmt.Println()
 	return nil
@@ -135,7 +137,7 @@ func (repo PlayerRepo) PlayerViewTheirPokemon(playerUsn string) error {
 			}
 			fmt.Printf("Player %s with ID %d has:\n", value.UserName, value.ID)
 			for index, value := range value.ListPokemon {
-				fmt.Printf("%d %s - %s\n", index+1, value.Name, value.Type)
+				fmt.Printf("%d %s - %s - %s\n", index+1, value.Name, value.Type, value.RegisteredDate)
 			}
 			return nil
 		}

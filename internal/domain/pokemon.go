@@ -6,5 +6,5 @@ type Pokemon struct {
 	Type           string  `validate:"required"`
 	CatchRate      float32 `validate:"gt=0,lte=100"`
 	IsRare         bool    
-	RegisteredDate string  `validate:"required"`
+	RegisteredDate string  `validate:"datetime"`
 }
